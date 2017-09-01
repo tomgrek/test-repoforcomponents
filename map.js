@@ -1,114 +1,17 @@
-{
-  title: 'Map',
-  uuid: null,
-  content:
-  `<div style="position: absolute; top: 1.5rem;">
-
-  </div>`,
-  preview: `<img style="height:100%; width:100%;" src="https://www.mapbox.com/help/img/ios/switch/4-location-mapbox.jpg"></img>`,
-  data: {},
-  dataSources: [
-  ],
-  dataSinks: [
-  ],
-  defaultSettings: {},
-  settings: {
-    color: 'darkorchid',
-  },
-  settingsDisplay:
-    `<div>My settings for my map
-      <input id="title" type="text"></input>
-      <div><span>Color: </span><input id="color" type="text"></input></div>
-    </div>`,
-  height: 150,
-  width: 300,
-  transform: '',
-  offsetX: 0,
-  offsetY: 0,
-  script: `
-            const drawChart = (e) => {
-              if (!e) e = { detail: {} };
-              node.children[0].innerHTML = '';
-              let svg = d3.select(node.children[0]).append("svg");
-              let height = (e.detail.height || this.height) - 24; // 24=1.5rem=title bar
-              let width = e.detail.width || this.width;
-              svg.attr("height", height);
-              svg.attr("width", width);
-              var x = d3.scaleLinear().range([0, width]);
-              var y = d3.scaleLinear().range([0, height]);
-              let g = svg.append("g");
-              var line = d3.line()
-                .x(function(d) { return x(d.index); })
-                .y(function(d) { return y(d.val); });
-              for (let key of Object.keys(this.data)) {
-                let data = this.data[key].map((x, index) => {
-                  let val = JSON.parse(x.data)
-                  return { index, val: parseFloat(val.value) || 0 };
-                });
-                x.domain(d3.extent(data, function(d) { return d.index; }));
-                y.domain([d3.max(data, function(d) { return d.val; }), 0]);
-                g.append("path")
-                    .datum(data)
-                    .attr("fill", "none")
-                    .attr("stroke", this.settings.color)
-                    .attr("stroke-linejoin", "round")
-                    .attr("stroke-linecap", "round")
-                    .attr("stroke-width", 1.5)
-                    .attr("d", line);
-              }
-            };
-            node.addEventListener('dblclick', e => {
-              e.preventDefault();
-              e.stopPropagation();
-            });
-            node.addEventListener('click', e => {
-              // console.log(this.settings.myfield);
-            });
-            node.addEventListener('data', e => {
-              Object.assign(this.data, e.detail);
-              drawChart(e);
-            });
-            node.addEventListener('newData', e => {
-              if (e.detail.dataSink) {
-                if (this.data[e.detail.dataSink.title].length >= e.detail.dataSink.limit) {
-                  this.data[e.detail.dataSink.title].shift();
-                }
-                this.data[e.detail.dataSink.title].push(e.detail.newData);
-              } else {
-                let assignObj = {};
-                assignObj[e.detail.dataSource.title] = e.detail.newData;
-                Object.assign(this.data, assignObj);
-              }
-              drawChart();
-            });
-            node.addEventListener('input', e => {
-              if (e.target.id === 'myfield') {
-                this.settings.myfield = e.target.value;
-              }
-            });
-            node.addEventListener('created', e => {
-              this.uuid = e.detail.uuid;
-              // add css for the component
-              let styleNode = document.createElement('style');
-              let styleFactory = new Function('uuid', this.style);
-              styleNode.innerHTML = styleFactory(this.uuid);
-              styleNode.id = 'style-'+this.uuid;
-              document.body.appendChild(styleNode);
-              // drawChart(e);
-            });
-            node.addEventListener('resized', (e) => {
-              drawChart(e);
-            });
-            node.addEventListener('settingsChanged', (e) => {
-              drawChart(e);
-            });
-            node.addEventListener('deleted', (e) => {
-            });
-            node.addEventListener('moved', (e) => {
-              this.transform = e.detail.transform;
-              this.offsetX = e.detail.offsetX;
-              this.offsetY = e.detail.offsetY;
-            });
-          `,
-  style: `return '#'+uuid+' {  }' `,
- }
+{ "title"           : "Map",
+  "uuid"            : null,
+  "content"         : "<div style=\"position: absolute; top: 1.5rem;\">\n  </div>",
+  "preview"         : "<img style=\"height:100%; width:100%;\" src=\"https://www.mapbox.com/help/img/ios/switch/4-location-mapbox.jpg\"></img>",
+  "data"            : {},
+  "dataSources"     : [],
+  "dataSinks"       : [],
+  "defaultSettings" : {},
+  "settings"        : { "color" : "darkorchid" },
+  "settingsDisplay" : "<div>My settings for my map\n      <input id=\"title\" type=\"text\"></input>\n      <div><span>Color: </span><input id=\"color\" type=\"text\"></input></div>\n    </div>",
+  "height"          : 150,
+  "width"           : 300,
+  "transform"       : "",
+  "offsetX"         : 0,
+  "offsetY"         : 0,
+  "script"          : "\n            const drawChart = (e) => {\n              if (!e) e = { detail: {} };\n              node.children[0].innerHTML = '';\n              let svg = d3.select(node.children[0]).append(\"svg\");\n              let height = (e.detail.height || this.height) - 24; // 24=1.5rem=title bar\n              let width = e.detail.width || this.width;\n              svg.attr(\"height\", height);\n              svg.attr(\"width\", width);\n              var x = d3.scaleLinear().range([0, width]);\n              var y = d3.scaleLinear().range([0, height]);\n              let g = svg.append(\"g\");\n              var line = d3.line()\n                .x(function(d) { return x(d.index); })\n                .y(function(d) { return y(d.val); });\n              for (let key of Object.keys(this.data)) {\n                let data = this.data[key].map((x, index) => {\n                  let val = JSON.parse(x.data)\n                  return { index, val: parseFloat(val.value) || 0 };\n                });\n                x.domain(d3.extent(data, function(d) { return d.index; }));\n                y.domain([d3.max(data, function(d) { return d.val; }), 0]);\n                g.append(\"path\")\n                    .datum(data)\n                    .attr(\"fill\", \"none\")\n                    .attr(\"stroke\", this.settings.color)\n                    .attr(\"stroke-linejoin\", \"round\")\n                    .attr(\"stroke-linecap\", \"round\")\n                    .attr(\"stroke-width\", 1.5)\n                    .attr(\"d\", line);\n              }\n            };\n            node.addEventListener('dblclick', e => {\n              e.preventDefault();\n              e.stopPropagation();\n            });\n            node.addEventListener('click', e => {\n              // console.log(this.settings.myfield);\n            });\n            node.addEventListener('data', e => {\n              Object.assign(this.data, e.detail);\n              drawChart(e);\n            });\n            node.addEventListener('newData', e => {\n              if (e.detail.dataSink) {\n                if (this.data[e.detail.dataSink.title].length >= e.detail.dataSink.limit) {\n                  this.data[e.detail.dataSink.title].shift();\n                }\n                this.data[e.detail.dataSink.title].push(e.detail.newData);\n              } else {\n                let assignObj = {};\n                assignObj[e.detail.dataSource.title] = e.detail.newData;\n                Object.assign(this.data, assignObj);\n              }\n              drawChart();\n            });\n            node.addEventListener('input', e => {\n              if (e.target.id === 'myfield') {\n                this.settings.myfield = e.target.value;\n              }\n            });\n            node.addEventListener('created', e => {\n              this.uuid = e.detail.uuid;\n              // add css for the component\n              let styleNode = document.createElement('style');\n              let styleFactory = new Function('uuid', this.style);\n              styleNode.innerHTML = styleFactory(this.uuid);\n              styleNode.id = 'style-'+this.uuid;\n              document.body.appendChild(styleNode);\n              // drawChart(e);\n            });\n            node.addEventListener('resized', (e) => {\n              drawChart(e);\n            });\n            node.addEventListener('settingsChanged', (e) => {\n              drawChart(e);\n            });\n            node.addEventListener('deleted', (e) => {\n            });\n            node.addEventListener('moved', (e) => {\n              this.transform = e.detail.transform;\n              this.offsetX = e.detail.offsetX;\n              this.offsetY = e.detail.offsetY;\n            });\n          ",
+  "style"           : "return '#'+uuid+' {  }' " }

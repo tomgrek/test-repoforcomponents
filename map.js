@@ -1,5 +1,4 @@
-export default () => {
-return {
+{
   title: 'Map',
   uuid: null,
   content:
@@ -112,5 +111,4 @@ return {
             });
           `,
   style: `return '#'+uuid+' {  }' `,
-  }
-}
+ }
